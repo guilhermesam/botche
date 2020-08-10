@@ -1,30 +1,9 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const config = require("./config.json")
-const moment = require("moment")
-const puppeteer = require("puppeteer")
+const config = require("./config.json");
+const moment = require("moment");
+const scrape = require("./scraping");
 
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-let scrape = async() => {
-
-    const url = `https://www.alegretetudo.com.br/categoria/policia/page/${getRandomInt(1, 120)}`;
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    await page.goto(url, {waitUntil: 'networkidle2'})
-
-    const data = await page.evaluate(() => {
-        const titleArray = document.querySelectorAll('main > div > article header h3')
-        const title = titleArray[Math.floor(Math.random() * titleArray.length)].innerText
-        return title
-    })
-
-    browser.close()
-    return data
-}
 
 client.on("ready", () => {
   console.log(`O bot foi iniciado, com ${client.users.cache.size} usuários em ${client.guilds.cache.size} servidores.`);
@@ -52,7 +31,7 @@ client.on("message", async message => {
 
     else if (command === "alegretetudo") {
         scrape().then((value) => {
-            const m = message.channel.send(value)
+            const m = message.channel.send(value + ":gun: ")
         })
     }
 });
